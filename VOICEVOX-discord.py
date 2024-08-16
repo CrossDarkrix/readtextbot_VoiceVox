@@ -128,7 +128,7 @@ async def adddic(ctx, text, read_text):
             ff.write(str(dic).replace("'", '"'))
         except:
             pass
-    await ctx.respond('追加しました')
+    await ctx.respond('{}を{}という読み方にして追加しました'.format(text, read_text))
 
 
 @bot.slash_command(description='単語辞書から単語を削除します(元の単語を指定してください)')
