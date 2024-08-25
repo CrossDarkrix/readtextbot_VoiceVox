@@ -1,8 +1,14 @@
 import discord
 import requests
 import tempfile
+import threading
+import time
 import os
 import json
+try:
+    import console
+except:
+    console = None
 
 Token = ''
 if not os.path.exists('dic_text.json'):
@@ -67,7 +73,6 @@ def save_tempfile(text: str, speaker: int):
 @bot.event
 async def on_ready():
     await bot.change_presence(activity=discord.Game('BOTが正常に起動したのだ(v1.0)'))
-    print("起動しました。")
 
 
 @bot.event
@@ -168,4 +173,74 @@ async def showdic(ctx):
     await ctx.respond('\n'.join(text))
 
 
-bot.run(Token)
+def TimeCount():
+    Uptimeloop = [0]
+    def TimeCounter():
+        Year = 0
+        Week = 0
+        Day = 0
+        Hour = 0
+        Minute = 0
+        Sec = 0
+        for i in Uptimeloop:
+            if Sec == 59:
+                Sec = 0
+                Minute += 1
+            else:
+                Sec += 1
+            if Minute == 59:
+                Minute = 0
+                Hour += 1
+            if Hour == 24:
+                Hour = 0
+                Day += 1
+            if Day == 7:
+                Day = 0
+                Week += 1
+            if Week == 13:
+                Week = 0
+                Year += 1
+            if Year <= 9:
+                SYear = '0{}'.format(Year)
+            else:
+                SYear = '{}'.format(Year)
+            if Week <= 9:
+                SWeek = '0{}'.format(Week)
+            else:
+                SWeek = '{}'.format(Week)
+            if Day <= 9:
+                SDay = '0{}'.format(Day)
+            else:
+                SDay = '{}'.format(Day)
+            if Hour <= 9:
+                SHour = '0{}'.format(Hour)
+            else:
+                SHour = '{}'.format(Hour)
+            if Minute <= 9:
+                SMinute = '0{}'.format(Minute)
+            else:
+                SMinute = '{}'.format(Minute)
+            if Sec <= 9:
+                SSec = '0{}'.format(Sec)
+            else:
+                SSec = '{}'.format(Sec)
+            if not console == None:
+                console.clear()
+                print('稼働時間: {}年, {}週間, {}日, {}:{}:{}'.format(SYear, SWeek, SDay, SHour, SMinute, SSec))
+            else:
+                print('稼働時間: {}年, {}週間, {}日, {}:{}:{}'.format(SYear, SWeek, SDay, SHour, SMinute, SSec), end='\r', flush=True)
+            time.sleep(1)
+            Uptimeloop.append(i+1)
+    threading.Thread(target=TimeCounter, daemon=True).start()
+
+
+def main():
+    TimeCount()
+    bot.run(Token)
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except OSError:
+        pass
